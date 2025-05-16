@@ -66,3 +66,15 @@ Ensure that Docker is still running then rerun
 ```sh
 docker compose up -d
 ```
+
+To kill the process, press:
+
+Ctrl + c on keyboard
+
+Or if that doesn't work, similar to above, run:
+
+`netstat -ano | findstr :5000`
+
+`TCP    127.0.0.1:5000    0.0.0.0:0    LISTENING    <PID_NUMBER>`
+
+`taskkill /PID <PID_NUMBER> /F`
