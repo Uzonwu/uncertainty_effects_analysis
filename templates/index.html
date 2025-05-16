@@ -26,16 +26,11 @@
 
         <section id="summary">
             <h2>Summary</h2>
-            <p>
-                This study investigates how signal uncertainty affects the detection 
-                of simple and complex visual patterns. Participants completed a 
-                two-interval forced-choice task, detecting either sinusoidal gratings 
-                or band-limited noise textures. Signal uncertainty was manipulated by 
-                presenting either a single signal type or one of five variations per 
-                trial. Additionally, noise was either fixed across trials or varied. 
-                Contrast thresholds were measured to assess detection performance under 
-                these conditions, providing insight into how uncertainty influences the 
-                perception of structured and complex patterns.
+            <p class="mx-4">
+                This study investigates how signal uncertainty affects the detection of simple and complex visual patterns. Participants completed a two-interval forced-choice task, detecting either sinusoidal gratings or band-limited noise textures. Signal uncertainty was manipulated by presenting either a single signal type or one of five variations per trial. Additionally, noise was either fixed across trials or varied.
+            </p>
+            <p class="mx-4">
+                Contrast thresholds were measured to assess detection performance under these conditions, providing insight into how uncertainty influences the perception of structured and complex patterns.
             </p>
         </section>
 
@@ -101,7 +96,13 @@
                 <img src="data:image/png;base64,{{ plot_overall }}" alt="Overall Threshold Plot">
             </div>
             <div class="chart-container">
+                <img src="data:image/png;base64,{{ plot_overall_sem }}" alt="Overall SEM Threshold Plot">
+            </div>
+            <div class="chart-container">
                 <img src="data:image/png;base64,{{ plot_best_2 }}" alt="Best 2 of 3 Threshold Plot">
+            </div>
+            <div class="chart-container">
+                <img src="data:image/png;base64,{{ plot_best_2_sem }}" alt="Best 2 of 3 Threshold Plot">
             </div>
         </section>
 
@@ -122,10 +123,16 @@
             <div class="chart-container">
                 <h3>General Thresholds</h3>
                 <img id="subjectGeneralPlot" src="" alt="Subject General Plot" style="display:none;">
+                
+                <h3>SEM Thresholds</h3>
+                <img id="subjectSEMPlot" src="" alt="Subject SEM Plot" style="display:none;">
             </div>
             <div class="chart-container">
                 <h3>Best 2 of 3 Thresholds</h3>
                 <img id="subjectBest2Plot" src="" alt="Subject Best 2 of 3 Plot" style="display:none;">
+            
+                <h3>Best 2 of 3 SEM Thresholds</h3>
+                <img id="subjectBest2SEMPlot" src="" alt="Subject Best 2 of 3 SEM Plot" style="display:none;">
             </div>
             
         </section>
@@ -155,7 +162,13 @@
                     <img src="data:image/png;base64,{{ plot_low_acuity }}" alt="Thresholds for Lower (Better) Acuity Subjects">
                 </div>
                 <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_low_sem_acuity }}" alt="Thresholds for SEM Lower (Better) Acuity Subjects">
+                </div>
+                <div class="chart-container">
                     <img src="data:image/png;base64,{{ plot_high_acuity }}" alt="Thresholds for Higher (Worse) Acuity Subjects">
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_high_sem_acuity }}" alt="Thresholds for SEM Higher (Worse) Acuity Subjects">
                 </div>
             </div>
             <h3>Possible Effect of Handedness</h3>
@@ -167,7 +180,31 @@
                     <img src="data:image/png;base64,{{ plot_left_handed }}" alt="Left-Handed Average Thresholds">
                 </div>
                 <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_left_sem }}" alt="Left-Handed SEM Thresholds">
+                </div>
+                <div class="chart-container">
                     <img src="data:image/png;base64,{{ plot_right_handed }}" alt="Right-Handed Average Thresholds">
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_right_sem }}" alt="Right-Handed SEM Thresholds">
+                </div>
+            </div>
+            <h3>Possible Effect of Gender</h3>
+            <div class="gender">
+                <div class="table-container">
+                    {{ gender_counts|safe }}
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_female }}" alt="Female Average Thresholds">
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_female_sem }}" alt="Female SEM Thresholds">
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_male }}" alt="Male Average Thresholds">
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ plot_male_sem }}" alt="Male SEM Thresholds">
                 </div>
             </div>
         </section>
@@ -195,10 +232,20 @@
                         document.getElementById("subjectBest2Plot").src = "data:image/png;base64," + data.plot_best_2_subject;
                         document.getElementById("subjectBest2Plot").style.display = "block";
                     }
+                    if (data.plot_subject_sem) {
+                        document.getElementById("subjectSEMPlot").src = "data:image/png;base64," + data.plot_subject_sem;
+                        document.getElementById("subjectSEMPlot").style.display = "block";
+                    }
+                    if (data.plot_best_2_subject_sem) {
+                        document.getElementById("subjectBest2SEMPlot").src = "data:image/png;base64," + data.plot_best_2_subject_sem;
+                        document.getElementById("subjectBest2SEMPlot").style.display = "block";
+                    }
                 });
             } else {
                 document.getElementById("subjectGeneralPlot").style.display = "none";
                 document.getElementById("subjectBest2Plot").style.display = "none";
+                document.getElementById("subjectSEMPlot").style.display = "none";
+                document.getElementById("subjectBest2SEMPlot").style.display = "none";
             }
         });
     </script>
