@@ -67,6 +67,9 @@ Ensure that Docker is still running then rerun
 docker compose up -d
 ```
 
+## Ending the program
+
+
 To kill the process, press:
 
 Ctrl + c on keyboard
