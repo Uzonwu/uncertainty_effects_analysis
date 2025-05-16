@@ -10,9 +10,11 @@ Contrast thresholds were measured to assess detection performance under these co
 ## Getting Started
 
 
-From the woring director, run:
+Make sure Docker is running and from the woring director, in cmd, run:
 
 `docker compose build --no-cache`
+
+And after building, run:
 
 `docker compose up -d`
 
@@ -20,9 +22,11 @@ Navigate to `https//localhost:5000/dashboard`
 
 Errors:
 
-If you get 
+If you get:
 
-Run 
+`Bind for 0.0.0.0:5000 failed: port is already allocated`
+
+If using mac/linux, run: 
 
 ```sh
 lsof -i :5000
@@ -38,6 +42,23 @@ Note the PID number then run
 
 ```sh
 kill <PID_NUMBER>
+```
+
+If using Windows, run: 
+
+```sh
+netstat -aon | findstr :5000
+```
+You should see something similar to below:
+
+```sh
+TCP    0.0.0.0:5000           0.0.0.0:0              LISTENING       <PID_NUMBER>
+```
+
+Note the PID number then run 
+
+```sh
+taskkill /PID <PID_NUMBER> /F
 ```
 
 Ensure that Docker is still running then rerun 
