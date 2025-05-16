@@ -1,4 +1,4 @@
-# Effects of Signal Variation on Visual Pattern Detection Under Fixed and Variable Noise 
+# Effects of Uncertainty on Visual Pattern Detection Under Fixed and Variable Noise 
 
 
 ## Summary
