@@ -172,8 +172,8 @@ def subject(subject):
         "subject_best_2_sem_fixed": subject_best_2_sem_fixed.to_dict(orient="records"),
         "subject_best_2_sem_variable": subject_best_2_sem_variable.to_dict(orient="records"),
 
-        "subject_avg_html": subject_avg.to_html(classes='table table-stripped'),
-        "subject_best_2_html": subject_best_2_avg.to_html(classes='table table-stripped'),
+        "subject_avg_html": subject_avg.set_index(pd.Index(range(1, len(subject_avg) + 1))).to_html(classes='table table-stripped'),
+        "subject_best_2_html": subject_best_2_avg.set_index(pd.Index(range(1, len(subject_best_2_avg) + 1))).to_html(classes='table table-stripped'),
 
         "subject_sem_html": subject_sem.to_html(classes='table table-stripped'),
         "subject_best_2_sem_html": subject_best_2_sem.to_html(classes='table table-stripped'),
@@ -530,15 +530,15 @@ def dashboard():
                             ),
 
                             tables=dict(
-                                overall_avg=overall_avg_cond.to_html(classes='table'),
+                                overall_avg=overall_avg_cond.set_index(pd.Index(range(1, len(overall_avg_cond) + 1))).to_html(classes='table'),
                                 best_2_avg=best_2_avg_cond.to_html(classes='table'),
                                 lowest_thresholds=lowest_thresholds.to_html(classes='table'),
-                                lower_avg_threshold=lower_avg_threshold.to_html(classes='table'),
-                                higher_avg_threshold=higher_avg_threshold.to_html(classes='table'),
-                                left_avg_threshold=left_avg_threshold.to_html(classes='table'),
-                                right_avg_threshold=right_avg_threshold.to_html(classes='table'),
-                                female_avg_threshold=female_avg_threshold.to_html(classes='table'),
-                                male_avg_threshold=male_avg_threshold.to_html(classes='table'),
+                                lower_avg_threshold=lower_avg_threshold.set_index(pd.Index(range(1, len(lower_avg_threshold) + 1))).to_html(classes='table'),
+                                higher_avg_threshold=higher_avg_threshold.set_index(pd.Index(range(1, len(higher_avg_threshold) + 1))).to_html(classes='table'),
+                                left_avg_threshold=left_avg_threshold.set_index(pd.Index(range(1, len(left_avg_threshold) + 1))).to_html(classes='table'),
+                                right_avg_threshold=right_avg_threshold.set_index(pd.Index(range(1, len(right_avg_threshold) + 1))).to_html(classes='table'),
+                                female_avg_threshold=female_avg_threshold.set_index(pd.Index(range(1, len(female_avg_threshold) + 1))).to_html(classes='table'),
+                                male_avg_threshold=male_avg_threshold.set_index(pd.Index(range(1, len(male_avg_threshold) + 1))).to_html(classes='table'),
                                 gender_table=gender_table.to_html(classes='table'),
                                 handedness_table=handedness_table.to_html(classes='table'),
                                 age_table=age_table.to_html(classes='table'),
@@ -548,231 +548,6 @@ def dashboard():
                                 gender_counts=gender_counts.to_html(classes='table'),
                             )
                         )
-
-
-### still uses index
-@app.route("/subject_plot/<subject>")
-def subject_plot(subject):
-    df = load_data()
-    
-    if isinstance(df, str):  
-        return jsonify({"error": "Error loading data"}), 500
-    
-    subject_avg, best_2_avg, subject_sem, subject_best_2_sem = avg_per_subject(df, subject)
-    # subject_sem, subject_best_2_sem = sem_per_subject(df, subject)
-    
-    if isinstance(subject_avg, dict):  
-        return jsonify(subject_avg), 404  # Return error if subject not found
-
-    #generating
-    plot_subject = generatePlot(subject_avg, f"Thresholds for {subject}")
-    plot_best_2_subject = generatePlot(best_2_avg, f"Best 2 of 3 Thresholds for {subject}")
-    plot_subject_sem = generatePlot(subject_sem, f"Thresholds for {subject}")
-    plot_best_2_subject_sem = generatePlot(subject_best_2_sem, f"Best 2 of 3 Thresholds for {subject}")
-    
-    return jsonify({
-        "plot_subject": plot_subject,
-        "plot_best_2_subject": plot_best_2_subject,
-        "plot_subject_sem": plot_subject_sem,
-        "plot_best_2_subject_sem": plot_best_2_subject_sem
-    })
-
-#generating plots for everyone
-def generatePlot(df, title):
-    plt.figure(figsize=(8, 5))
-
-    #check if we have only one noise condition for a subject, handling them separately
-    if {"stimulus", "nStim", "noise"}.issubset(df.columns):
-        has_mean = "mean_threshold" in df.columns
-        has_sem = "sem_threshold" in df.columns
-
-        df["condition"] = df["stimulus"] + " (" + df["noise"] + ")"
-        #checks for presence of mean and sem columns for plotting sem graphs
-        value_col = "mean_threshold" if has_mean else "threshold"
-        means = df.pivot(index="condition", columns="nStim", values=value_col).fillna(0)
-
-        sems = (
-            df.pivot(index="condition", columns="nStim", values="sem_threshold").fillna(0)
-            if has_sem else None
-        )
-
-        #set order
-        desired_order = [
-            "grating (fixed)",
-            "texture (fixed)",
-            "grating (variable)",
-            "texture (variable)"
-        ]
-        means = means.reindex(desired_order)
-        if sems is not None:
-            sems = sems.reindex(desired_order)
-
-        bar_width = 0.4
-        x_base = np.arange(len(desired_order))
-        x_stim1 = x_base - bar_width / 2
-        x_stim5 = x_base + bar_width / 2
-
-        bar_colors = ["blue" if "fixed" in label else "red" for label in desired_order]
-
-        for i, label in enumerate(desired_order):
-            plt.bar(
-                x_stim1[i],
-                means.loc[label, 1],
-                width=bar_width,
-                color=bar_colors[i],
-                yerr=sems.loc[label, 1] if sems is not None else None,
-                capsize=5 if sems is not None else 0
-            )
-            plt.bar(
-                x_stim5[i],
-                means.loc[label, 5],
-                width=bar_width,
-                edgecolor="black",
-                color=bar_colors[i],
-                yerr=sems.loc[label, 5] if sems is not None else None,
-                capsize=5 if sems is not None else 0
-            )
-
-        xtick_labels = [
-            "grat. nStim=1/5",
-            "tex. nStim=1/5",
-            "grat. nStim=1/5",
-            "tex. nStim=1/5"
-        ]
-        plt.xticks(ticks=x_base, labels=xtick_labels, rotation=0)
-
-        plt.legend(handles=[
-            Patch(facecolor="blue", label="Fixed noise"),
-            Patch(facecolor="red", label="Variable noise")
-        ])
-    else:
-        #if 'stimulus', 'nStim', 'noise' are missing, assume it's lowest_thresholds
-        plt.bar(df["subject"], df["threshold"], color="black")
-
-    plt.title(title)
-    plt.xlabel("Condition" if "condition" in df.columns else "Subject")
-    plt.ylabel("Threshold")
-    plt.ylim(0.0, 0.01)
-    plt.tight_layout()
-
-    # Save to BytesIO
-    img = io.BytesIO()
-    plt.savefig(img, format='png', bbox_inches='tight')
-    img.seek(0)
-    return base64.b64encode(img.getvalue()).decode('utf8')
-
-@app.route("/")
-def index():
-    df = load_data()
-    metadata = load_metadata()
-    
-    #handling errors
-    if isinstance(df, str) or isinstance(metadata, str):
-        return jsonify({"error": "Error loading data"}), 500
-    
-    #getting the lowest 5 subjects
-    lowest_thresholds = lowest_avg_threshold(df)
-
-    #getting overall and best 2 of 3
-    overall_avg_cond, best_2_avg_cond, overall_sem, best_2_sem = overall_thresholds(df)
-
-    # Generate tables for gender, handedness, age group, visual acuity
-    gender_table = metadata["gender"].value_counts().reset_index()
-    gender_table.columns = ["Gender", "Count"]
-    gender_table.index += 1
-    
-    handedness_table = metadata["handedness"].value_counts().reset_index()
-    handedness_table.columns = ["Handedness", "Count"]
-    handedness_table.index += 1
-
-    left_avg_threshold, right_avg_threshold, handedness_counts, left_sem, right_sem = handedness(df, metadata)
-
-    # Extract only the base visual acuity values (removing +/- adjustments)
-    metadata["visual_acuity_base"] = metadata["visual acuity"].str.extract(r"(20/\d+)").fillna("20/20")
-
-    # sorting visual acuity
-    acuity_order = ["20/12", "20/16", "20/20", "20/25", "20/30", "20/35", "20/40"]
-    metadata["visual_acuity_base"] = pd.Categorical(metadata["visual_acuity_base"], categories=acuity_order, ordered=True)
-
-    # Count occurrences and sort
-    acuity_table = metadata["visual_acuity_base"].value_counts().sort_index().reset_index()
-    acuity_table.columns = ["Visual Acuity", "Count"]
-    acuity_table.index += 1
-
-    acuity_counts, lower_avg_threshold, higher_avg_threshold, lower_sem_threshold, higher_sem_threshold = acuity(metadata, df)
-
-    female_avg_threshold, male_avg_threshold, gender_counts, female_sem, male_sem = gender(df, metadata)
-
-    # Categorize age into bins
-    bins = [0, 20, 30, 40, 50, 60, 70, 100]
-    labels = ["<20", "20-30", "30-40", "40-50", "50-60", "60-70", "70+"]
-    metadata["age_group"] = pd.cut(metadata["age"], bins=bins, labels=labels, right=False)
-
-    # Ensure correct order by making age_group categorical with an explicit order
-    metadata["age_group"] = pd.Categorical(metadata["age_group"], categories=labels, ordered=True)
-
-    # Count occurrences and sort by the categorical order
-    age_table = metadata["age_group"].value_counts().sort_index().reset_index()
-    age_table.columns = ["Age Group", "Count"]
-    age_table.index += 1
-
-    subjects = df["subject"].unique().tolist()
-
-    #plotting the graphs
-    plot_lowest = generatePlot(lowest_thresholds, "Top 5 Subjects with Lowest Average Thresholds")
-    plot_overall = generatePlot(overall_avg_cond, "Overall Average Thresholds")
-    plot_best_2 = generatePlot(best_2_avg_cond, "Best 2 of 3 Average Thresholds")
-    plot_overall_sem = generatePlot(overall_sem, "Overall Thresholds with SEM")
-    plot_best_2_sem = generatePlot(best_2_sem, "Best 2 of 3 Thresholds with SEM")
-
-    plot_low_acuity = generatePlot(lower_avg_threshold, "Thresholds for Lower(Better) Acuity Subjects")
-    plot_high_acuity = generatePlot(higher_avg_threshold, "Thresholds for Higher(Worse) Acuity Subjects")
-    
-    plot_low_sem_acuity = generatePlot(lower_sem_threshold, "Thresholds for Lower(Better) Acuity Subjects")
-    plot_high_sem_acuity = generatePlot(higher_sem_threshold, "Thresholds for Higher(Worse) Acuity Subjects")
-    
-    plot_left_handed = generatePlot(left_avg_threshold, "Average Thresholds for Left-Handed Subjects (2)")
-    plot_right_handed = generatePlot(right_avg_threshold, "Average Thresholds for Right-Handed Subjects (Best 2)")
-
-    plot_left_sem = generatePlot(left_sem, "Average Thresholds for Left-Handed Subjects (2)")
-    plot_right_sem = generatePlot(right_sem, "Average Thresholds for Right-Handed Subjects (Best 2)")
-
-    plot_female = generatePlot(female_avg_threshold, "Average Thresholds for Female Subjects")
-    plot_male = generatePlot(male_avg_threshold, "Average Thresholds for Male Subjects")
-
-    plot_female_sem = generatePlot(female_sem, "Average Thresholds for Female Subjects")
-    plot_male_sem = generatePlot(male_sem, "Average Thresholds for Male Subjects")
-
-    #rendering with html
-    return render_template(
-        "index.html",
-        plot_lowest=plot_lowest,
-        plot_overall=plot_overall,
-        plot_best_2=plot_best_2,
-        plot_overall_sem=plot_overall_sem,
-        plot_best_2_sem=plot_best_2_sem,
-        plot_low_acuity=plot_low_acuity,
-        plot_high_acuity=plot_high_acuity,
-        plot_low_sem_acuity=plot_low_sem_acuity,
-        plot_high_sem_acuity=plot_high_sem_acuity,
-        plot_left_handed=plot_left_handed,
-        plot_right_handed=plot_right_handed,
-        plot_left_sem=plot_left_sem,
-        plot_right_sem=plot_right_sem,
-        plot_female=plot_female,
-        plot_male=plot_male,
-        plot_female_sem=plot_female_sem,
-        plot_male_sem=plot_male_sem,
-        subjects=subjects,
-        thresholds=lowest_thresholds.to_html(classes='table'),
-        gender_table=gender_table.to_html(classes='table'),
-        handedness_table=handedness_table.to_html(classes='table'),
-        age_table=age_table.to_html(classes='table'),
-        acuity_table=acuity_table.to_html(classes='table'),
-        acuity_counts=acuity_counts.to_html(classes='table'),
-        gender_counts=gender_counts.to_html(classes='table'),
-        handedness_counts=handedness_counts.to_html(classes='table'),
-    )
 
 
 if __name__ == "__main__":

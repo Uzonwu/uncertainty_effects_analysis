@@ -35,22 +35,49 @@
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
                 <h3>Summary</h3>
-                <p>This study investigates how signal uncertainty affects 
+                <p>
+                    This study investigates how signal uncertainty affects 
                     the detection of simple and complex visual patterns. 
                     Participants completed a two-interval forced-choice 
-                    task, detecting either sinusoidal gratings or band-limited 
+                    task (2ifc), consiting of 50 trials for each of 12 
+                    blocks, detecting either sinusoidal gratings or band-limited 
                     noise textures. Signal uncertainty was manipulated by 
-                    presenting either a single signal type or one of five v
-                    ariations per trial. Additionally, noise was either fixed 
-                    across trials or varied.
+                    presenting either a single signal type or one of five 
+                    variations per trial. That is, for grating, it would 
+                    either be one orientation, or a random selection from 
+                    5 orientations. Similarly for textures. 
+                    Additionally, noise was either fixed across trials or varied.
                 </p>
-                <p>Contrast thresholds were measured to assess detection performance 
+                <p>
+                    Contrast thresholds were measured using the QUEST handler to assess detection performance 
                     under these conditions, providing insight into how uncertainty 
-                    influences the perception of structured and complex patterns.
+                    influences the perception of both structured and complex patterns.
+                </p>
+                <p>
+                    Below are images of the stimuli used during the experiment without noise. 
                 </p>
                 <div class="mb-5"></div>
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-md-8 mx-auto text-center">
+                <img src="{{ url_for('static', filename='images/G-1.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/G-2.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/G-3.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/G-4.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/G-5.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-8 mx-auto text-center">
+                <img src="{{ url_for('static', filename='images/T-1.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/T-2.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/T-3.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/T-4.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+                <img src="{{ url_for('static', filename='images/T-5.png') }}" alt="Stimulus Example" class="img-fluid mb-4 rounded shadow-sm" style="max-width: 15%;">
+            </div>
+        </div>        
+        
         <div hidden>
             <div class="row mb-4">
                 <div class="col-md-6">
@@ -83,9 +110,13 @@
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
                 <h3>Subject Categories Based on Gender, Visual Acuity and Handedness.</h3>
-                <p>Here, the participants have been categorised based on some of 
-                    their metadata. This is to further analyse, later in the page, 
-                    if they have any effect on their performance of the experiment.
+                <p>
+                    Here, the participants, of which there are 21 total, have been categorised based on some of 
+                    their metadata. This is to further analyse them based on their performace, later on, to see 
+                    if any of these characteristics have any effect on their performance of the experiment.
+                </p>
+                <p>
+                    Addressing some inconsistencies: Some participants did not return some details as they chose not to.
                 </p>
                 <div class="mb-5"></div>
             </div>
@@ -160,12 +191,14 @@
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
                 <h3>Subjects with the Lowest Thresholds</h3>
-                <p>Here, I have graphed the average thresholds of the 
+                <p>
+                    Here, I have graphed the average thresholds of the 
                     subjects with the lowest thresholds in the entire 
-                    study. Something to note, these exlude the subjects 
+                    study, ie the best performing subjects according to Quest. 
+                    Something to note, these exlude the subjects 
                     that had only run through the experiment once in one 
-                    noice condition as opposed to the required two in two 
-                    consequtive days.
+                    noice condition as opposed to the required two condtions 
+                    (fixed and variable) in two consequtive days.
                 </p>
                 <div class="mb-5"></div>
             </div>
@@ -196,15 +229,29 @@
             <div class="col-md-6 mx-auto">
                 <h3>Overall Average Thresholds
                 </h3>
-                <p>Here is the threshold of all 21 subjects, based on 3 
-                    grating stimulus at grating = 1 (one grating used throughout), 
-                    3 grating stimulus at grating = 5 (one random out 5 each block), 
-                    3 tetxure stimulus at grating = 1 (one grating used throughout), 
-                    3 texture stimulus at grating = 5 (one random out 5 each block), 
-                    all of the above when the noise condition is fixed and again when 
-                    it is fixed.
+                <p>
+                    Here is the average threshold of all 21 subjects, based on the below parameters
+                    both ran under the fixed noise condition and under the variable noise
+                    condition.
                 </p>
-                <p>There is the overall plot and then the best 2 out of 3 for each condition.</p>
+                <p>
+                    3 grating stimulus blocks at grating = 1 (one grating used throughout)
+                </p>
+                <p> 
+                    3 grating stimulus blocks at grating = 5 (one random out of 5 per each block)
+                </p>
+                <p> 
+                    3 tetxure stimulus blocks at texture = 1 (one texture used throughout)
+                </p>
+                <p> 
+                    3 texture stimulus blocks at texture = 5 (one random out of 5 per each block)
+                </p>
+                <p>
+                    There is the overall plot and then the best 2 out of 3 for each condition for more 
+                    precise values. Additionally, there are graphs ploting the SEM (Standard error of the mean),
+                    this is to see better the see the variation of data gotten on each condition; 
+                    wider is less precise, tighter is more precise.
+                </p>
                 <div class="mb-5"></div>
             </div>
         </div>
@@ -268,11 +315,12 @@
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
                 <h3>Average threshold Specific to Subjects</h3>
-                <p>Here, there is the list of thresholds specific to each subject, 
-                    based on their data. Additionally, there is also a list to 
-                    reflect their best 2 of 3 thresholds.
+                <p>
+                    Here, there is the list of average thresholds specific to each subject, 
+                    including the experimenters, 
+                    based on their responses, as well as their best 2 out of 3 thresholds 
+                    and the plot for the SEM (Standard Error of Mean) for both.
                 </p>
-
                 <div class="mt-2 mb-4 text-center">
                     <div class="row mb-4">
                         <div class="col-md-6 mx-auto">
@@ -363,23 +411,32 @@
     <div id="{{ sid }}" class="section" style="display: none;">
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
-                <h3>Analysing If Metadata Has Any Effects On Thresholds</h3>
-                <p>There is a theory that factors such as handedness can effect 
+                <h3>Analysing If Metadata Has Any Effects On Performance</h3>
+                <p>
+                    There is a theory that physical factors, such as handedness can effect 
                     the way we percieve things, that is to say that it may have 
                     a role in the strategies in place for interpreting or 
                     understanding the things we see.
                 </p>
-                <p>For the first section of this part, I will use the standard 
+                <p>
+                    For the first section of this part, I will use the standard 
                     acceptable visual acuity score, which is 20/20. I will compare 
                     the average threshold of subjects with a lower visual acuity, 
-                    against the average threshold of subjects with an exact or higher. 
-                    Similarly, for the second section, I will measure the the average 
+                    against the average threshold of subjects with an exact or higher 
+                    (worse) visual acuity.
+                </p>
+                <p>
+                    For the second section, I will measure the the average 
                     threshold of subjects that are left handed against the average 
-                    threshold of subjects that are right handed. The number varies 
-                    rather widely however, 13 right handed and 5 left handed, so I wiil 
-                    only use the top 3 of each. And for the third section, I will measure 
-                    the averages of the female subjects against the averages of the male 
-                    subject.
+                    threshold of subjects that are right handed. The number of 
+                    participants in these sections vary rather widely however, 10 
+                    right handed and 2 left handed, so I wiil only use the data of 
+                    the 2 left handed and only 2 of the 10 right handed for comparison.
+                </p>
+                <p>
+                    And for the third section, similar to the above sections, I will measure 
+                    the average thresholds of the female subjects against the average 
+                    thresholds of the male subjects.
                 </p>
                 <div class="mb-5"></div>
             </div>
@@ -945,11 +1002,12 @@ function makeBarChart(code=null) {
                     beginAtZero: true,
                     min: 0,
                     max: 0.01
-                } }
+                } 
+            }
         }
     }
 
-    dom.parentNode.innerHTML = `<canvas id='bar_chart_${code}'></canvas>`
+    dom.parentNode.innerHTML = `<canvas id='bar_chart_${code}' width="450" height="250"></canvas>`
     dom = document.getElementById(`bar_chart_${code}`)
     ctxVertical = dom.getContext('2d');
 
@@ -1025,7 +1083,7 @@ function makeErrorBarChart(code=null) {
         }
     }
 
-    dom.parentNode.innerHTML = `<canvas id='error_bar_chart_${code}'></canvas>`
+    dom.parentNode.innerHTML = `<canvas id='error_bar_chart_${code}' width="450" height="250"></canvas>`
     dom = document.getElementById(`error_bar_chart_${code}`)
     ctxVertical = dom.getContext('2d');
 
