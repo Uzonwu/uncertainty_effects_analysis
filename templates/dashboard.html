@@ -25,7 +25,7 @@
                 <option value="overall_average">Overall Average</option>
                 <option value="average_per_subject">Average Per Subject</option>
                 <option value="effects_of_metadata">Effects of Metadata</option>
-                <option value="uncertainty_effect">The Effects of Uncertainty</option>
+                <option value="uncertainty_effect">Effects of Uncertainty</option>
             </select>
             </div>
         </div>
@@ -637,66 +637,33 @@
     <div id="{{ sid }}" class="section" style="display: none;">
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
-                <h3>The effects of Uncertainty on Visual Pattern Detection</h3>
+                <h3>The Effects of Uncertainty on Visual Pattern Detection</h3>
                 <p>
                     Here, the overall data of subjects are grouped according to noise
                     conditions, ie Fixed and Variable, under grating and textures, on
-                    a scatter plot graph.
-                </p>
-                <p>
-                    Through this, we can easily see which way the data is leaning, 
+                    a scatter plot graph. Through this, we can easily see which way the data is leaning, 
                     therefore determining which condition or combination of conditions 
                     show a clear effect of uncertainty in the subjects.
+                </p>
+                <p>
+                    
                 </p>
                 <div class="mb-5"></div>
             </div>
         </div>
 
-        {% with cid="overall_avg", cid1="overall_sem" %}
+        {% with cid="uncertainty" %}
         <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-                <h5 id="title_{{ cid }}" class="mb-3">Overall Threshold</h5>
-                {{ tables.overall_avg | safe }}
-            </div>
             <div class="col-md-6 mb-4">
-                <h5 id="title_{{ cid }}" class="mb-3">Chart</h5>
+                <h5 id="title_{{ cid }}" class="mb-3">Fixed Noise Condition</h5>
                 <div class="card shadow-sm p-4">
-                    <canvas id="bar_chart_{{ cid }}"></canvas>
+                    <img src="data:image/png;base64,{{ plot_fixed_uncertainty }}" alt="Uncertainty Effect Plot" style="max-width: 100%; height: auto;">
                 </div>
             </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-            </div>
             <div class="col-md-6 mb-4">
-                <h5 id="title_{{ cid1 }}" class="mb-3">SEM Chart</h5>
+                <h5 id="title_{{ cid }}" class="mb-3">Variable Noise Condition</h5>
                 <div class="card shadow-sm p-4">
-                    <canvas id="error_bar_chart_{{ cid1 }}"></canvas>
-                </div>
-            </div>
-        </div>
-        {% endwith %}
-        
-        {% with cid="best_2_avg", cid1="best_2_sem" %}
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-                <h5 id="title_{{ cid }}" class="mb-3">Best 2 of 3 Overall Threshold</h5>
-                {{ tables.best_2_avg | safe }}
-            </div>
-            <div class="col-md-6 mb-4">
-                <h5 id="title_{{ cid }}" class="mb-3">Chart</h5>
-                <div class="card shadow-sm p-4">
-                    <canvas id="bar_chart_{{ cid }}"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-            </div>
-            <div class="col-md-6 mb-4">
-                <h5 id="title_{{ cid1 }}" class="mb-3">SEM Chart</h5>
-                <div class="card shadow-sm p-4">
-                    <canvas id="error_bar_chart_{{ cid1 }}"></canvas>
+                    <img src="data:image/png;base64,{{ plot_variable_uncertainty }}" alt="Uncertainty Effect Plot" style="max-width: 100%; height: auto;">
                 </div>
             </div>
         </div>
@@ -704,8 +671,6 @@
 
     </div>
     {% endwith %}
-
-
 
 
 </div>
@@ -1352,7 +1317,6 @@ function getColors() {
 }
 
 </script>
-
 
 <script>
     // JavaScript to handle select change

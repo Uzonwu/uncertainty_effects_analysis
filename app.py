@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, send_file
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -323,6 +323,82 @@ def gender(df, metadata):
 
     return female_avg_threshold, male_avg_threshold, gender_counts, female_sem, male_sem
 
+def uncertainty(df):
+    exclude_subj_fixed = ["th", "eh", "sj", "eo", "cc", "xr"]
+    df_fixed = df[~df['subject'].isin(exclude_subj_fixed)]
+
+    fixed_noise = df_fixed[df_fixed['noise'] == 'fixed']
+
+    exclude_subj_variable = ["gc", "eh"]
+    df_variable = df[~df['subject'].isin(exclude_subj_variable)]
+
+    variable_noise = df_variable[df_variable['noise'] == 'variable']
+
+    fixed_subject_avg = (
+        fixed_noise
+        .groupby(['subject', 'stimulus'])['threshold']
+        .mean()
+        .reset_index()
+        .pivot(index='subject', columns='stimulus', values='threshold')
+        .reset_index()
+    )
+    fixed_subject_avg = fixed_subject_avg.dropna(subset=['grating', 'texture'])
+
+    variable_subject_avg = (
+        variable_noise
+        .groupby(['subject', 'stimulus'])['threshold']
+        .mean()
+        .reset_index()
+        .pivot(index='subject', columns='stimulus', values='threshold')
+        .reset_index()
+    )
+    variable_subject_avg = variable_subject_avg.dropna(subset=['grating', 'texture'])
+
+    subject_colors = {
+        "jf": "gold", "cc": "aquamarine", "co": "bisque", "jm": "blue",
+        "db": "brown", "ec": "burlywood", "eo": "cadetblue", "gc": "chartreuse",
+        "kf": "chocolate", "eh": "coral", "na": "pink", "kc": "cyan",
+        "lp": "darkgoldenrod", "th": "darkorange", "jc": "darkorchid",
+        "gv": "darkseagreen", "cw": "darkslategray", "mr": "deeppink",
+        "an": "deepskyblue", "sj": "firebrick", "ve": "azure",
+        "xr": "slateblue", "jb": "slategray", "zh": "plum", "cn": "turquoise"
+    }
+
+    return fixed_subject_avg, variable_subject_avg, subject_colors
+
+def plot(subject_avg, subject_colors):
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    for _, row in subject_avg.iterrows():
+        subj = row['subject']
+        color = subject_colors.get(subj, 'black')
+        ax.scatter(row['texture'], row['grating'], color=color, marker='o', s=100, label=subj)
+        ax.scatter(row['texture'], row['texture'], color=color, marker='^', s=100)
+
+    lims = [
+        min([subject_avg[['texture', 'grating']].min().min(), 0]),
+        max([subject_avg[['texture', 'grating']].max().max()])
+    ]
+    
+    ax.plot(lims, lims, 'k--', linewidth=1, alpha=0.7)
+
+    ax.set_xlabel('Texture')
+    ax.set_ylabel('Grating')
+    ax.set_title('Grating vs Texture Thresholds')
+    ax.set_xlim(lims[0] * 0.95, lims[1] * 1.05)
+    ax.set_ylim(lims[0] * 0.95, lims[1] * 1.05)
+
+    handles, labels = ax.get_legend_handles_labels()
+    by_label = dict(zip(labels, handles))
+    ax.legend(by_label.values(), by_label.keys(), title='Subject', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    plt.tight_layout()
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png', bbox_inches='tight')
+    img.seek(0)
+    return base64.b64encode(img.getvalue()).decode('utf8')
+
 
 @app.route("/dashboard")
 def dashboard():
@@ -335,7 +411,12 @@ def dashboard():
     
     #getting the lowest 5 subjects formula
     lowest_thresholds = lowest_avg_threshold(df)
-    
+
+    fixed_subject_avg, variable_subject_avg, subject_colors = uncertainty(df)
+
+    plot_fixed_uncertainty = plot(fixed_subject_avg, subject_colors)
+    plot_variable_uncertainty = plot(variable_subject_avg, subject_colors)
+
     #getting overall and best 2 of 3 formula
     overall_avg_cond, best_2_avg_cond, overall_sem, best_2_sem = overall_thresholds(df)
     overall_avg_fixed = overall_avg_cond[overall_avg_cond['noise'] == 'fixed']
@@ -430,6 +511,8 @@ def dashboard():
 
     return render_template("dashboard.html",
                             subjects=subjects,
+                            plot_fixed_uncertainty=plot_fixed_uncertainty,
+                            plot_variable_uncertainty=plot_variable_uncertainty,
 
                             dataframes=dict(
                                 # "Top 5 Subjects with Lowest Average Thresholds"
